@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyCraft-Gen | AI Code Expert</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white font-mono">
+    <nav class="border-b border-slate-700 p-4 flex justify-between">
+        <h1 class="text-xl font-bold text-cyan-400">🚀 PyCraft-Gen</h1>
+        <span class="text-slate-400 text-sm">Applied AI Project v1.0</span>
+    </nav>
+
+    <main class="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+            <h2 class="text-lg text-cyan-300">Describe Python Logic</h2>
+            <textarea id="prompt" class="w-full h-64 bg-slate-800 border border-slate-600 rounded p-4 focus:outline-none focus:border-cyan-500" placeholder="e.g. Create a FastAPI endpoint to upload files to S3..."></textarea>
+            <button onclick="generateCode()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-3 rounded font-bold transition">Generate & Analyze</button>
+        </div>
+
+        <div class="space-y-4">
+            <h2 class="text-lg text-green-400">Crafted Code</h2>
+            <div id="output" class="w-full h-96 bg-black border border-slate-700 rounded p-4 overflow-auto text-sm">
+                <pre><code id="code-result" class="text-green-300"># Result will appear here...</code></pre>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function generateCode() {
+            const prompt = document.getElementById('prompt').value;
+            const resultArea = document.getElementById('code-result');
+            resultArea.innerText = "Processing on GPU...";
+            
+            const response = await fetch('/generate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({prompt: prompt})
+            });
+            const data = await response.json();
+            resultArea.innerText = data.code;
+        }
+    </script>
+</body>
+</html>

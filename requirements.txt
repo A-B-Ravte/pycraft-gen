@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+jinja2
+python-multipart
+transformers
+peft
+bitsandbytes
+unsloth  # For the training phase later
+ruff     # For static code analysis

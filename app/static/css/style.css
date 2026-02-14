@@ -1,0 +1,19 @@
+/* Custom scrollbar for that 'Hacker' feel */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #0ea5e9;
+}
+
+#code-result {
+    tab-size: 4;
+    white-space: pre-wrap;
+}
