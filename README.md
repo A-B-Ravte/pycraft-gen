@@ -34,14 +34,15 @@ python -m venv .venv
 
 # Install dependencies
 pip install fastapi uvicorn jinja2 python-dotenv llama-cpp-python
+```
 
-3. Model Setup
+### 3. Model Setup
 Download the fine-tuned GGUF model from my Hugging Face:
 A-B-Ravte/pycraft-qwen-2.5-7b-adapter
 
 Place the .gguf file in the models/ directory.
 
-4. Run the App
+### 4. Run the app
 python -m app.main
 
 Visit http://127.0.0.1:8000 to start generating code.
