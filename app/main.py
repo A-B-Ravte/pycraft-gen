@@ -53,10 +53,10 @@ async def generate_code(request: CodeRequest):
 '''
 @app.post("/generate")
 async def generate_code(request: CodeRequest):
-    # We return a stream of text
+    # Ensure we are returning the generator itself
     return StreamingResponse(
         engine.generate_stream(request.prompt), 
-        media_type="text/plain"
+        media_type="text/event-stream"  # Use event-stream for better browser handling
     )
 
 if __name__ == "__main__":

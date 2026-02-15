@@ -16,7 +16,7 @@
         <div class="space-y-4">
             <h2 class="text-lg text-cyan-300">Describe Python Logic</h2>
             <textarea id="prompt" class="w-full h-64 bg-slate-800 border border-slate-600 rounded p-4 focus:outline-none focus:border-cyan-500" placeholder="e.g. Create a FastAPI endpoint to upload files to S3..."></textarea>
-            <button onclick="generateCode()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-3 rounded font-bold transition">Generate & Analyze</button>
+            <button id="generate-btn" onclick="generateCode()" class="w-full bg-cyan-600 hover:bg-cyan-500 py-3 rounded font-bold transition">Generate & Analyze</button>
         </div>
 
         <div class="space-y-4">
@@ -29,40 +29,55 @@
 
     <script>
         async function generateCode() {
-            const prompt = document.getElementById('user-prompt').value;
-            const codeOutput = document.getElementById('code-display');
+            // FIX: IDs must match HTML exactly
+            const promptInput = document.getElementById('prompt');
+            const codeOutput = document.getElementById('code-result');
             const btn = document.getElementById('generate-btn');
 
-            // Reset UI
-            codeOutput.innerText = "";
-            btn.disabled = true;
-            btn.innerText = "Generating...";
-
-            const response = await fetch("/generate", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ prompt: prompt })
-            });
-
-            // 1. Get the reader from the response body
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-
-            // 2. Read the stream chunk by chunk
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-
-                // 3. Decode the chunk and append to the UI
-                const chunk = decoder.decode(value, { stream: true });
-                codeOutput.innerText += chunk;
-                
-                // Auto-scroll to bottom as code grows
-                codeOutput.scrollTop = codeOutput.scrollHeight;
+            if (!promptInput.value) {
+                alert("Please enter a prompt!");
+                return;
             }
 
-            btn.disabled = false;
-            btn.innerText = "Generate Code";
+            // UI Feedback
+            codeOutput.innerText = "Initializing engine (this takes 30-60s on CPU)...";
+            btn.disabled = true;
+            btn.innerText = "AI is thinking...";
+
+            try {
+                const response = await fetch("/generate", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt: promptInput.value })
+                });
+
+                if (!response.ok) throw new Error("Server error");
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                
+                codeOutput.innerText = ""; // Clear loader text
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    console.log("Received chunk:", chunk);
+                    
+                    codeOutput.innerText += chunk;
+                    
+                    // Auto-scroll the output container
+                    const outputContainer = document.getElementById('output');
+                    outputContainer.scrollTop = outputContainer.scrollHeight;
+                }
+            } catch (error) {
+                console.error("Streaming error:", error);
+                codeOutput.innerText = "Error: " + error.message;
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Generate Code";
+            }
         }
     </script>
 </body>
