@@ -10,6 +10,9 @@ __pycache__/
 
 # Large Model Files (They stay on Hugging Face, not Git)
 models/
+model_gguf/
+model_gguf_gguf/
+models/*.gguf
 outputs/
 *.safetensors
 *.bin
