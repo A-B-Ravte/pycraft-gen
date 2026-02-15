@@ -29,17 +29,40 @@
 
     <script>
         async function generateCode() {
-            const prompt = document.getElementById('prompt').value;
-            const resultArea = document.getElementById('code-result');
-            resultArea.innerText = "Processing on GPU...";
-            
-            const response = await fetch('/generate', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({prompt: prompt})
+            const prompt = document.getElementById('user-prompt').value;
+            const codeOutput = document.getElementById('code-display');
+            const btn = document.getElementById('generate-btn');
+
+            // Reset UI
+            codeOutput.innerText = "";
+            btn.disabled = true;
+            btn.innerText = "Generating...";
+
+            const response = await fetch("/generate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: prompt })
             });
-            const data = await response.json();
-            resultArea.innerText = data.code;
+
+            // 1. Get the reader from the response body
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+
+            // 2. Read the stream chunk by chunk
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                // 3. Decode the chunk and append to the UI
+                const chunk = decoder.decode(value, { stream: true });
+                codeOutput.innerText += chunk;
+                
+                // Auto-scroll to bottom as code grows
+                codeOutput.scrollTop = codeOutput.scrollHeight;
+            }
+
+            btn.disabled = false;
+            btn.innerText = "Generate Code";
         }
     </script>
 </body>

@@ -14,16 +14,18 @@ class PyCraftEngine:
         )
         print("✅ Model loaded successfully!")
 
-    def generate(self, prompt: str):
-        # Format for ChatML (exactly how you trained it)
+    def generate_stream(self, prompt: str):
         formatted_prompt = f"<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant\n"
         
-        output = self.llm(
+        # Use stream=True to get a generator
+        stream = self.llm(
             formatted_prompt,
             max_tokens=512,
-            stop=["<|im_end|>", "<|im_start|>"], # Safety stops
-            echo=False,
-            temperature=0.2 # Lower temperature = more accurate code
+            stop=["<|im_end|>", "<|im_start|>"],
+            stream=True, # THIS IS KEY FOR STEAMING 
+            temperature=0.2
         )
         
-        return output['choices'][0]['text'].strip()
+        for chunk in stream:
+            token = chunk['choices'][0]['text']
+            yield token  # Yield each piece of text as it arrives

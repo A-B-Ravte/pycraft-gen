@@ -2,6 +2,7 @@ import os
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 import uvicorn
 from dotenv import load_dotenv
@@ -28,6 +29,7 @@ class CodeRequest(BaseModel):
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+'''
 @app.post("/generate")
 async def generate_code(request: CodeRequest):
     try:
@@ -48,6 +50,14 @@ async def generate_code(request: CodeRequest):
         }
     except Exception as e:
         return {"code": "Error", "analysis": str(e)}
+'''
+@app.post("/generate")
+async def generate_code(request: CodeRequest):
+    # We return a stream of text
+    return StreamingResponse(
+        engine.generate_stream(request.prompt), 
+        media_type="text/plain"
+    )
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=False)
