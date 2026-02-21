@@ -14,9 +14,14 @@ model_gguf/
 model_gguf_gguf/
 models/*.gguf
 outputs/
+*.gguf
 *.safetensors
 *.bin
 *.pth
+
+# Logs & cache
+*.log
+cache/
 
 # IDE
 .vscode/
