@@ -7,6 +7,10 @@ from pydantic import BaseModel
 import uvicorn
 from dotenv import load_dotenv
 
+
+'''
+This is version 1.0 
+'''
 # 1. IMPORT YOUR ENGINE
 from app.engine import PyCraftEngine
 
