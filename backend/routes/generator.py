@@ -15,6 +15,8 @@ def generate_code(model_name: str , user_prompt: GeneratorPrompt):
     You are a senior Python developer.
     Generate clean production-ready Python code.
     Return only code.
+    Do NOT use markdown.
+    Do NOT use triple backticks.
     """
 
     formatted_prompt = generator_prompt + user_prompt.prompt
